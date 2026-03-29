@@ -2,6 +2,12 @@
 
 An open-source desktop widget manager built with **Electron**. Display any HTML page as a transparent, frameless widget pinned directly to your Windows desktop.
 
+## Screenshots
+
+| Control Panel | Widget in Action |
+|---|---|
+| ![Control Panel](screenshots/screenshot1.png) | ![Widget in Action](screenshots/screenshot2.png) |
+
 ## Features
 
 - 🖥️ Display any HTML widget on your desktop with a transparent background
@@ -13,11 +19,9 @@ An open-source desktop widget manager built with **Electron**. Display any HTML 
 - 📦 Export & Import widgets
 - 🌐 Arabic / English UI
 
-## Screenshots
+## Download
 
-| Control Panel | Widget in Action |
-|---|---|
-| ![Control Panel](screenshots/screenshot1.png) | ![Widget in Action](screenshots/screenshot2.png) |
+Download the latest version from the [Releases page](https://github.com/HxH-3mk/Desktop-Widgets/releases/latest).
 
 ## Prerequisites
 
@@ -27,8 +31,8 @@ An open-source desktop widget manager built with **Electron**. Display any HTML 
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/desktop-widgets.git
-cd desktop-widgets
+git clone https://github.com/HxH-3mk/Desktop-Widgets.git
+cd Desktop-Widgets
 
 # 2. Install dependencies
 npm install
@@ -55,6 +59,12 @@ A widget is a single self-contained `.html` file. Guidelines:
 4. Use `rgba()` backgrounds for transparency effects.
 
 Once your file is ready, click **"Add Custom Widget"** in the control panel and select your `.html` file.
+
+## Support
+
+If you find this project useful, consider buying me a coffee ☕
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/hxh3mk)
 
 ## License
 
