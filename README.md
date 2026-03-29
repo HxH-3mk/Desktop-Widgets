@@ -1,6 +1,6 @@
 # Desktop Widgets
 
-An open-source desktop widget manager built with **Electron**. Display any HTML page as a transparent, frameless widget pinned directly to your Windows desktop.
+An open-source desktop widget manager for Windows built with **Electron**. Display any HTML page as a transparent, frameless widget pinned directly to your Windows desktop.
 
 ## Screenshots
 
