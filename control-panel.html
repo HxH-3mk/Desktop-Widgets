@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Widgets Control Panel</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
+      --success-hover: #059669;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    body {
+      font-family: 'Inter', 'Cairo', sans-serif;
+      margin: 0;
+      padding: 30px;
+      background-color: var(--bg-color);
+      color: var(--text);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--text);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: auto;
+    }
+
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      background: linear-gradient(to right, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+
+    .toolbar button {
+      width: auto;
+      background-color: var(--success);
+      padding: 12px 24px;
+      font-weight: 600;
+    }
+
+    .toolbar button:hover {
+      background-color: var(--success-hover);
+    }
+
+    .widgets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .widget-card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .widget-icon {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .widget-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 56px;
+      height: 30px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #334155;
+      border-radius: 30px;
+      transition: background 0.3s;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #94a3b8;
+      border-radius: 50%;
+      transition: transform 0.3s, background 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    .toggle-switch input:checked+.toggle-slider {
+      background: #3b82f6;
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .toggle-switch input:checked+.toggle-slider::before {
+      transform: translateY(-50%) translateX(26px);
+      background: #fff;
+    }
+
+    .toggle-switch:hover .toggle-slider {
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: 0.2s;
+      flex: 1;
+      font-family: inherit;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .btn-warning {
+      background-color: #f59e0b;
+    }
+
+    .btn-warning:hover {
+      background-color: #d97706;
+    }
+
+    .btn-active {
+      background-color: #f59e0b;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      width: 450px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 10000;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #3b82f6;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .modal input:focus {
+      outline: none;
+      border-color: #60a5fa;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .dev-guide {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 4px solid #3b82f6;
+      padding: 12px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      border-radius: 4px;
+    }
+
+    html[dir="rtl"] .dev-guide {
+      border-left: none;
+      border-right: 4px solid #3b82f6;
+    }
+
+    #selected-file-text {
+      font-size: 12px;
+      color: var(--success);
+      margin-bottom: 15px;
+      display: block;
+      word-break: break-all;
+    }
+
+    .settings-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+    }
+
+    .settings-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .setting-info {
+      flex: 1;
+    }
+
+    .setting-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .setting-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .setting-control {
+      margin-inline-start: 16px;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      margin-inline-start: 6px;
+      vertical-align: middle;
+      transition: 0.3s;
+    }
+
+    .status-badge.off {
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--muted);
+    }
+
+    .tray-hint {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 4px;
+      opacity: 0.75;
+    }
+
+    .bmc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #FFDD00;
+      color: #000000;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 10px 24px;
+      font-size: 22px;
+      font-family: 'Cookie', cursive;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(255, 221, 0, 0.3);
+      letter-spacing: 1px;
+    }
+
+    .bmc-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(255, 221, 0, 0.5);
+    }
+
+    .bmc-btn:active {
+      transform: translateY(0);
+    }
+
+    .bmc-btn .bmc-coffee {
+      font-size: 24px;
+    }
+
+    .footer-bmc {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="top-bar" style="display:flex; justify-content:flex-end; align-items:center;">
+    <button class="lang-btn" onclick="toggleLanguage()" id="langToggleBtn">عربي</button>
+  </div>
+
+  <div class="header">
+    <h1 data-i18n="title">Widgets Control Panel</h1>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-title">⚙️ <span data-i18n="settingsTitle">App Settings</span></div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-label">
+          🚀 <span data-i18n="startupLabel">Run on Windows Startup</span>
+          <span class="status-badge off" id="startupBadge" data-i18n-on="on" data-i18n-off="off">OFF</span>
+        </div>
+        <div class="setting-desc" data-i18n="startupDesc">Automatically launch the app when Windows starts</div>
+      </div>
+      <div class="setting-control">
+        <label class="toggle-switch">
+          <input type="checkbox" id="startupToggle" onchange="toggleStartup(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <div class="setting-label">
+          🔕 <span data-i18n="minimizedLabel">Start Minimized to Tray</span>
+          <span class="status-badge off" id="minimizedBadge" data-i18n-on="on" data-i18n-off="off">OFF</span>
+        </div>
+        <div class="setting-desc" data-i18n="minimizedDesc">Hide the control panel on startup, accessible from the
+          system tray</div>
+      </div>
+      <div class="setting-control">
+        <label class="toggle-switch">
+          <input type="checkbox" id="minimizedToggle" onchange="toggleStartMinimized(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="tray-hint" data-i18n="trayHint">💡 Closing the window keeps the app running in the system tray.
+      Right-click the tray icon to exit.</div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="showModal('addModal')" data-i18n="addCustom">➕ Add Custom Widget</button>
+    <button onclick="importWidget()" data-i18n="importWidget">📥 Import Widget</button>
+  </div>
+
+  <div class="widgets-grid" id="widgets-container"></div>
+
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <h2 style="margin-top:0" data-i18n="addTitle">Create New Widget</h2>
+
+      <div class="dev-guide">
+        <strong data-i18n="devGuideTitle">📌 Developers Guide:</strong><br>
+        <span data-i18n="devGuide1">1. Select an .html file.</span><br>
+        <span data-i18n="devGuide2">2. Keep CSS and JS embedded in the HTML file.</span><br>
+        <span data-i18n="devGuide3">3. Use 100vw and 100vh for CSS dimensions.</span><br>
+        <span data-i18n="devGuide4">4. Do not use 'drag' property, the app handles it.</span>
+      </div>
+
+      <input type="text" id="wName" data-i18n-placeholder="wNamePlaceholder"
+        placeholder="Widget Name (e.g., Music Player)">
+      <input type="text" id="wIcon" data-i18n-placeholder="wIconPlaceholder" placeholder="Icon (e.g., 🎵)">
+      <div style="display: flex; gap:10px;">
+        <input type="number" id="wWidth" data-i18n-placeholder="wWidthPlaceholder" placeholder="Width (e.g., 300)">
+        <input type="number" id="wHeight" data-i18n-placeholder="wHeightPlaceholder" placeholder="Height (e.g., 200)">
+      </div>
+
+      <button style="width: 100%; background: #475569; margin-bottom: 5px;" onclick="chooseFile()"
+        data-i18n="chooseFileBtn">📄 Choose HTML File (Optional)</button>
+      <span id="selected-file-text" data-i18n="noFileSelected">No file selected (Blank template will be created)</span>
+
+      <div class="modal-actions">
+        <button style="flex:1" onclick="addWidget()" data-i18n="saveAdd">Save & Add</button>
+        <button style="flex:1" class="btn-danger" onclick="hideModal('addModal')" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h2 style="margin-top:0" data-i18n="editTitle">Edit Widget Size</h2>
+      <input type="hidden" id="editId">
+      <div style="display: flex; gap:10px;">
+        <div style="flex:1">
+          <label style="font-size: 14px; margin-bottom: 5px; display: block;" data-i18n="widthLabel">Width:</label>
+          <input type="number" id="eWidth">
+        </div>
+        <div style="flex:1">
+          <label style="font-size: 14px; margin-bottom: 5px; display: block;" data-i18n="heightLabel">Height:</label>
+          <input type="number" id="eHeight">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button style="flex:1; background: var(--success);" onclick="saveDimensions()" data-i18n="saveChanges">Save
+          Changes</button>
+        <button style="flex:1" class="btn-danger" onclick="hideModal('editModal')" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bmc">
+    <a class="bmc-btn" onclick="openBMC()" href="#">
+      <span class="bmc-coffee">☕</span>
+      <span>Buy me a coffee</span>
+    </a>
+  </div>
+
+  <script>
+    const { ipcRenderer, shell } = require('electron');
+    let widgetsList = [];
+    let selectedFilePath = null;
+
+    function openBMC() {
+      shell.openExternal('https://www.buymeacoffee.com/HxH3mk');
+    }
+
+    const translations = {
+      en: {
+        title: "Widgets Control Panel", addCustom: "➕ Add Custom Widget", importWidget: "📥 Import Widget",
+        addTitle: "Create New Widget", devGuideTitle: "📌 Developers Guide:",
+        devGuide1: "1. Select an .html file.", devGuide2: "2. Keep CSS and JS embedded in HTML.",
+        devGuide3: "3. Use 100vw and 100vh for dimensions.", devGuide4: "4. Don't use CSS drag, app handles it.",
+        wNamePlaceholder: "Widget Name (e.g., Music Player)", wIconPlaceholder: "Icon (e.g., 🎵)",
+        wWidthPlaceholder: "Width (e.g., 300)", wHeightPlaceholder: "Height (e.g., 200)",
+        chooseFileBtn: "📄 Choose HTML File (Optional)", noFileSelected: "No file selected (Blank template)",
+        saveAdd: "Save & Add", cancel: "Cancel", fixedBg: "Fix to Background",
+        muteAudio: "Mute Page Audio", disableClicks: "Disable Mouse Clicks",
+        enableBtn: "Enable Widget", disableBtn: "Disable Widget", exportBtn: "Export", deleteBtn: "Delete",
+        editSizeBtn: "Edit Size", editTitle: "Edit Widget Size", saveChanges: "Save Changes",
+        widthLabel: "Width:", heightLabel: "Height:", confirmDelete: "Permanently delete this widget?",
+        exportOk: "Exported successfully!", importOk: "Imported successfully!", reqName: "Enter widget name!", toggleLangBtn: "عربي",
+        settingsTitle: "App Settings",
+        startupLabel: "Run on Windows Startup", startupDesc: "Automatically launch the app when Windows starts",
+        minimizedLabel: "Start Minimized to Tray", minimizedDesc: "Hide the control panel on startup, accessible from the system tray",
+        trayHint: "💡 Closing the window keeps the app running in the system tray. Right-click the tray icon to exit.",
+        on: "ON", off: "OFF"
+      },
+      ar: {
+        title: "إدارة الـ Widgets", addCustom: "➕ إضافة Widget مخصص", importWidget: "📥 استيراد Widget",
+        addTitle: "إنشاء Widget جديد", devGuideTitle: "📌 دليل المطورين:",
+        devGuide1: "1. قم باختيار ملف بصيغة .html.", devGuide2: "2. يُفضل دمج أكواد CSS و JS داخل الـ HTML.",
+        devGuide3: "3. استخدم 100vw و 100vh للأبعاد.", devGuide4: "4. لا تستخدم خاصية السحب drag هنا.",
+        wNamePlaceholder: "اسم الويدجت (مثال: طقس اليوم)", wIconPlaceholder: "أيقونة (مثال: ⛅)",
+        wWidthPlaceholder: "العرض (مثال: 300)", wHeightPlaceholder: "الطول (مثال: 200)",
+        chooseFileBtn: "📄 اختر ملف HTML (اختياري)", noFileSelected: "لم يتم تحديد ملف (سيتم إنشاء قالب فارغ)",
+        saveAdd: "حفظ وإضافة", cancel: "إلغاء", fixedBg: "تثبيت في الخلفية",
+        muteAudio: "كتم صوت الصفحة", disableClicks: "منع لمس الصفحة بالماوس",
+        enableBtn: "تفعيل الويدجت", disableBtn: "إيقاف الويدجت", exportBtn: "تصدير", deleteBtn: "حذف",
+        editSizeBtn: "تعديل الأبعاد", editTitle: "تعديل أبعاد الويدجت", saveChanges: "حفظ التعديلات",
+        widthLabel: "العرض:", heightLabel: "الطول:", confirmDelete: "هل أنت متأكد من حذف هذا الويدجت نهائياً؟",
+        exportOk: "تم التصدير بنجاح!", importOk: "تم الاستيراد بنجاح!", reqName: "يرجى إدخال الاسم!", toggleLangBtn: "English",
+        settingsTitle: "إعدادات التطبيق",
+        startupLabel: "التشغيل مع بدء Windows", startupDesc: "تشغيل التطبيق تلقائياً عند إقلاع النظام",
+        minimizedLabel: "البدء مخفياً في شريط الإشعارات", minimizedDesc: "إخفاء لوحة التحكم عند البدء، يمكن الوصول إليها من الـ System Tray",
+        trayHint: "💡 إغلاق النافذة يُبقي التطبيق يعمل في الخلفية. انقر بزر الماوس الأيمن على أيقونة الإشعارات للخروج.",
+        on: "مفعّل", off: "معطّل"
+      }
+    };
+
+    let currentLang = localStorage.getItem('appLang') || 'en';
+
+    function applyLanguage() {
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+      const t = translations[currentLang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.innerText = t[el.getAttribute('data-i18n')];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.placeholder = t[el.getAttribute('data-i18n-placeholder')];
+      });
+      document.getElementById('langToggleBtn').innerText = t.toggleLangBtn;
+
+      updateBadge('startupBadge', document.getElementById('startupToggle')?.checked);
+      updateBadge('minimizedBadge', document.getElementById('minimizedToggle')?.checked);
+
+      renderWidgets();
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      localStorage.setItem('appLang', currentLang);
+      applyLanguage();
+    }
+
+    function updateBadge(badgeId, isOn) {
+      const badge = document.getElementById(badgeId);
+      if (!badge) return;
+      const t = translations[currentLang];
+      if (isOn) {
+        badge.textContent = t.on;
+        badge.classList.remove('off');
+      } else {
+        badge.textContent = t.off;
+        badge.classList.add('off');
+      }
+    }
+
+    async function loadSettings() {
+      const settings = await ipcRenderer.invoke('get-settings');
+      const startupToggle = document.getElementById('startupToggle');
+      const minimizedToggle = document.getElementById('minimizedToggle');
+      startupToggle.checked = !!settings.startWithWindows;
+      minimizedToggle.checked = !!settings.startMinimized;
+      updateBadge('startupBadge', startupToggle.checked);
+      updateBadge('minimizedBadge', minimizedToggle.checked);
+    }
+
+    async function toggleStartup(enable) {
+      await ipcRenderer.invoke('set-startup', enable);
+      updateBadge('startupBadge', enable);
+    }
+
+    async function toggleStartMinimized(enable) {
+      await ipcRenderer.invoke('set-start-minimized', enable);
+      updateBadge('minimizedBadge', enable);
+    }
+
+    async function loadWidgets() {
+      widgetsList = await ipcRenderer.invoke('get-widgets');
+      renderWidgets();
+      for (const widget of widgetsList) {
+        if (widget.wasRunning) {
+          await toggleWidget(widget.id);
+        }
+      }
+    }
+
+    function renderWidgets() {
+      const container = document.getElementById('widgets-container');
+      container.innerHTML = '';
+      const t = translations[currentLang];
+
+      widgetsList.forEach((widget) => {
+        const card = document.createElement('div');
+        card.className = 'widget-card';
+        const isRunning = document.getElementById(`btn-${widget.id}`)?.classList.contains('btn-active');
+        const btnText = isRunning ? t.disableBtn : t.enableBtn;
+        const btnClass = isRunning ? 'btn-active' : '';
+
+        card.innerHTML = `
+          <div class="widget-icon">${widget.icon || '📌'}</div>
+          <div class="widget-title">${widget.name}</div>
+          
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="fixed-${widget.id}" ${widget.wasFixed !== false ? 'checked' : ''} onchange="onFixedChange('${widget.id}', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>${t.fixedBg}</span>
+          </div>
+
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="mute-${widget.id}" ${widget.isMuted ? 'checked' : ''} onchange="onMuteChange('${widget.id}', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>🔇 ${t.muteAudio}</span>
+          </div>
+
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="noclicks-${widget.id}" ${widget.noClicks ? 'checked' : ''} onchange="onNoClicksChange('${widget.id}', this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+            <span>🚫 ${t.disableClicks}</span>
+          </div>
+
+          <div class="btn-group">
+            <button id="btn-${widget.id}" class="${btnClass}" onclick="toggleWidget('${widget.id}')">${btnText}</button>
+            <div class="btn-row">
+              <button onclick="openEditModal('${widget.id}')" style="background:#64748b;">${t.editSizeBtn}</button>
+              <button class="btn-warning" onclick="exportWidget('${widget.id}')">${t.exportBtn}</button>
+              <button class="btn-danger" onclick="deleteWidget('${widget.id}')">${t.deleteBtn}</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function toggleWidget(id) {
+      const widget = widgetsList.find(w => w.id === id);
+      const isFixed = document.getElementById(`fixed-${id}`).checked;
+      const btn = document.getElementById(`btn-${id}`);
+      const t = translations[currentLang];
+
+      const isRunning = await ipcRenderer.invoke('toggle-widget', widget, isFixed);
+
+      if (isRunning) {
+        btn.innerText = t.disableBtn;
+        btn.classList.add('btn-active');
+      } else {
+        btn.innerText = t.enableBtn;
+        btn.classList.remove('btn-active');
+      }
+    }
+
+    async function onFixedChange(id, isFixed) {
+      const btn = document.getElementById(`btn-${id}`);
+      if (btn && btn.classList.contains('btn-active')) {
+        await ipcRenderer.invoke('set-fixed-mode', id, isFixed);
+      }
+    }
+
+    async function onMuteChange(id, isMuted) {
+      await ipcRenderer.invoke('set-mute', id, isMuted);
+      const widget = widgetsList.find(w => w.id === id);
+      if (widget) widget.isMuted = isMuted;
+    }
+
+    async function onNoClicksChange(id, noClicks) {
+      await ipcRenderer.invoke('set-no-clicks', id, noClicks);
+      const widget = widgetsList.find(w => w.id === id);
+      if (widget) widget.noClicks = noClicks;
+    }
+
+    ipcRenderer.on('widget-closed', (event, id) => {
+      const btn = document.getElementById(`btn-${id}`);
+      if (btn) {
+        btn.innerText = translations[currentLang].enableBtn;
+        btn.classList.remove('btn-active');
+      }
+    });
+
+    async function deleteWidget(id) {
+      if (confirm(translations[currentLang].confirmDelete)) {
+        await ipcRenderer.invoke('delete-widget', id);
+        loadWidgets();
+      }
+    }
+
+    async function exportWidget(id) {
+      const success = await ipcRenderer.invoke('export-widget', id);
+      if (success) alert(translations[currentLang].exportOk);
+    }
+
+    async function importWidget() {
+      const success = await ipcRenderer.invoke('import-widget');
+      if (success) {
+        alert(translations[currentLang].importOk);
+        loadWidgets();
+      }
+    }
+
+    function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function hideModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function openEditModal(id) {
+      const widget = widgetsList.find(w => w.id === id);
+      document.getElementById('editId').value = widget.id;
+      document.getElementById('eWidth').value = widget.width;
+      document.getElementById('eHeight').value = widget.height;
+      showModal('editModal');
+    }
+
+    async function saveDimensions() {
+      const id = document.getElementById('editId').value;
+      const width = document.getElementById('eWidth').value;
+      const height = document.getElementById('eHeight').value;
+
+      const widget = widgetsList.find(w => w.id === id);
+      widget.width = width;
+      widget.height = height;
+
+      await ipcRenderer.invoke('update-widget', widget);
+      hideModal('editModal');
+      loadWidgets();
+    }
+
+    async function chooseFile() {
+      const filePath = await ipcRenderer.invoke('select-file');
+      if (filePath) {
+        selectedFilePath = filePath;
+        document.getElementById('selected-file-text').innerText = filePath;
+      }
+    }
+
+    async function addWidget() {
+      const name = document.getElementById('wName').value;
+      const icon = document.getElementById('wIcon').value;
+      const width = document.getElementById('wWidth').value || 300;
+      const height = document.getElementById('wHeight').value || 200;
+
+      if (!name) return alert(translations[currentLang].reqName);
+
+      const newWidget = { name, icon, width, height };
+      await ipcRenderer.invoke('add-widget', newWidget, selectedFilePath);
+
+      hideModal('addModal');
+      document.getElementById('wName').value = '';
+      document.getElementById('wIcon').value = '';
+      selectedFilePath = null;
+      document.getElementById('selected-file-text').innerText = translations[currentLang].noFileSelected;
+      loadWidgets();
+    }
+
+    applyLanguage();
+    loadSettings();
+    loadWidgets();
+  </script>
+</body>
+
+</html>

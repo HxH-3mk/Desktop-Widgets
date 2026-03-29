@@ -1,0 +1,35 @@
+{
+  "name": "desktop-widgets",
+  "version": "1.0.0",
+  "description": "تطبيق لإدارة وعرض الـ Widgets على سطح المكتب",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.mywidgets.app",
+    "productName": "Desktop Widgets",
+    "win": {
+      "icon": "color-widgets.ico",
+      "target": [
+        "nsis",
+        "portable",
+        "dir"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^26.8.1"
+  }
+}
